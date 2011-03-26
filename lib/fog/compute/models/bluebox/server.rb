@@ -88,7 +88,7 @@ module Fog
 
           if identity.nil?  # new record
             raise(ArgumentError, "password or public_key is required for this operation") if !password && !public_key
-            options['ssh_public_key'] = public_key if @public_key
+            options['ssh_public_key'] = public_key if public_key
             options['password'] = password if @password
           end
 
