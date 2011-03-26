@@ -3,6 +3,7 @@ module Fog
     class ELB < Fog::Service
 
       requires :aws_access_key_id, :aws_secret_access_key
+      recognizes :region, :host, :path, :port, :scheme, :persistent
 
       request_path 'fog/aws/requests/elb'
       request :create_load_balancer
@@ -15,16 +16,13 @@ module Fog
       request :register_instances_with_load_balancer
 
       class Mock
-        include Collections
 
         def initialize(options={})
-          Fog::Mock.not_implemented
         end
 
       end
 
       class Real
-        include Collections
 
         # Initialize connection to ELB
         #
@@ -45,11 +43,16 @@ module Fog
         # ==== Returns
         # * ELB object with connection to AWS.
         def initialize(options={})
+          require 'fog/core/parser'
+
           @aws_access_key_id      = options[:aws_access_key_id]
           @aws_secret_access_key  = options[:aws_secret_access_key]
           @hmac = Fog::HMAC.new('sha256', @aws_secret_access_key)
+
           options[:region] ||= 'us-east-1'
           @host = options[:host] || case options[:region]
+          when 'ap-northeast-1'
+            'elasticloadbalancing.ap-northeast-1.amazonaws.com'
           when 'ap-southeast-1'
             'elasticloadbalancing.ap-southeast-1.amazonaws.com'
           when 'eu-west-1'
@@ -61,9 +64,10 @@ module Fog
           else
             raise ArgumentError, "Unknown region: #{options[:region].inspect}"
           end
+          @path       = options[:path]      || '/'
           @port       = options[:port]      || 443
           @scheme     = options[:scheme]    || 'https'
-          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}", options[:persistent])
+          @connection = Fog::Connection.new("#{@scheme}://#{@host}:#{@port}#{@path}", options[:persistent])
         end
 
         def reload
@@ -82,7 +86,9 @@ module Fog
               :aws_access_key_id  => @aws_access_key_id,
               :hmac               => @hmac,
               :host               => @host,
-              :version            => '2009-11-25'
+              :path               => @path,
+              :port               => @port,
+              :version            => '2010-07-01'
             }
           )
 

@@ -1,8 +1,13 @@
+*~
+*.gem
+*.rbc
 *.sw?
+.bundle
 .DS_Store
+_site/*
 coverage
+doc/*
+Gemfile.lock
 rdoc
 pkg
 spec/credentials.yml
-.bundle
-*.gem

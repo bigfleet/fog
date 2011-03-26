@@ -30,8 +30,8 @@ module Fog
           request({
             'Action'      => 'PutAttributes',
             'DomainName'  => domain_name,
-            :parser       => Fog::Parsers::AWS::SimpleDB::Basic.new(@nil_string),
-            'ItemName' => item_name
+            'ItemName'    => item_name,
+            :parser       => Fog::Parsers::AWS::SimpleDB::Basic.new(@nil_string)
           }.merge!(encode_attributes(attributes, options[:replace], options[:expect])))
         end
 
@@ -54,9 +54,9 @@ module Fog
               @data[:domains][domain_name][item_name] ||= {}
               @data[:domains][domain_name][item_name][key.to_s] = [] unless @data[:domains][domain_name][item_name][key.to_s]
               if options[:replace].include?(key.to_s)
-                @data[:domains][domain_name][item_name][key.to_s] = [value.to_s]
+                @data[:domains][domain_name][item_name][key.to_s] = [*value].map {|x| x.to_s}
               else
-                @data[:domains][domain_name][item_name][key.to_s] += [value.to_s]
+                @data[:domains][domain_name][item_name][key.to_s] += [*value].map {|x| x.to_s}
               end
             end
             response.status = 200

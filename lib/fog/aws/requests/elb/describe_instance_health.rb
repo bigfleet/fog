@@ -23,7 +23,7 @@ module Fog
         #         * 'InstanceId'<~String>
         #         * 'ReasonCode'<~String>
         def describe_instance_health(lb_name, instance_ids = [])
-          params = AWS.indexed_param('Instances.member.%d.InstanceId', [*instance_ids], 1)
+          params = AWS.indexed_param('Instances.member.%d.InstanceId', [*instance_ids])
           request({
             'Action'           => 'DescribeInstanceHealth',
             'LoadBalancerName' => lb_name,
@@ -32,15 +32,6 @@ module Fog
         end
 
       end
-
-      class Mock
-
-        def describe_instance_health(lb_name, instance_ids = [])
-          Fog::Mock.not_implemented
-        end
-
-      end
-
     end
   end
 end

@@ -15,6 +15,10 @@ module Fog
      extend Fog::Terremark::Shared
 
      def self.new(options={})
+       location = caller.first
+       warning = "[yellow][WARN] Fog::Terremark::Vcloud is deprecated, to be replaced with Vcloud 1.0 someday/maybe[/]"
+       warning << " [light_black](" << location << ")[/] "
+       Formatador.display_line(warning)
 
        unless @required
          shared_requires
@@ -25,9 +29,9 @@ module Fog
 
        if Fog.mocking?
           Fog::Terremark::Vcloud::Mock.new(options)
-        else
+       else
           Fog::Terremark::Vcloud::Real.new(options)
-        end
+       end
      end
 
      class Real
@@ -91,7 +95,7 @@ module Fog
             nil
           end
         end
-      end
+     end
 
      class Mock
        include Fog::Terremark::Shared::Mock
@@ -106,7 +110,7 @@ module Fog
        end
      end
 
-    end
+   end
   end
 end
 
